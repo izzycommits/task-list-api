@@ -9,9 +9,11 @@ def create_task():
     request_body = request.get_json()
     title = request_body["title"]
     description = request_body["description"]
-    is_complete = request_body["is_complete"]
+    # is_complete = request_body["is_complete"]
 
-    new_task = Task(title=title, description=description, is_complete=is_complete)
+    new_task = Task(title=title, description=description)
+    # new_task = Task(title=title, description=description, is_complete=is_complete)
+
     db.session.add(new_task)
     db.session.commit()
 
