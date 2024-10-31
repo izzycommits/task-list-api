@@ -2,13 +2,13 @@ from flask import Flask
 from .db import db, migrate
 from .models import task, goal
 import os
-from .routes.task_routes import task_bp
+from .routes.task_routes import tasks_bp
 
 def create_app(config=None):
     app = Flask(__name__)
 
-    app.register_blueprint(task_bp)
-    
+    app.register_blueprint(tasks_bp)
+
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('SQLALCHEMY_DATABASE_URI')
 

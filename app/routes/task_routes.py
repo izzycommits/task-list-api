@@ -2,9 +2,9 @@ from flask import Blueprint, abort, make_response, request, Response
 from app.models.task import Task
 from app.db import db
 
-task_bp = Blueprint("task_bp", __name__, url_prefix="/tasks")
+tasks_bp = Blueprint("tasks_bp", __name__, url_prefix="/tasks")
 
-@task_bp.post("")
+@tasks_bp.post("")
 def create_task(): 
     request_body = request.get_json()
     title = request_body["title"]
@@ -21,7 +21,7 @@ def create_task():
     return response, 201
 
 
-@task_bp.get("")
+@tasks_bp.get("")
 def get_all_tasks(): 
     query = db.select(Task)
     title_param = request.args.get("title")
@@ -33,5 +33,45 @@ def get_all_tasks():
 
     tasks_response =[task.to_dict() for task in tasks]
 
-
     return tasks_response
+
+
+@tasks_bp.get("/<planet_id>")
+def get_single_planet(planet_id):
+    planet = validate_planet(planet_id)
+
+    return planet.to_dict()
+
+@tasks_bp.put("/<planet_id>")
+def update_planet(planet_id):
+    planet = validate_planet(planet_id)
+    request_body = request.get_json()
+
+    planet.name = request_body["name"]
+    planet.description = request_body["description"]
+    db.session.commit()
+
+    return Response(status = 204, mimetype = "application/json")
+
+@tasks_bp.delete("/<planet_id>")
+def delete_planet(planet_id):
+    planet = validate_planet(planet_id)
+    
+    db.session.delete(planet)
+    db.session.commit()
+
+    return Response(status = 204, mimetype = "application/json")
+
+def validate_planet(task_id):
+    try:
+        task_id = int(task_id)
+    except ValueError: 
+        abort(make_response({"message":f"Task id {task_id} is invalid"}, 400))
+
+    query = db.select(Task).where(Task.id == task_id)
+    task = db.session.scalar(query)
+
+    if not task:
+        abort(make_response({"message":f"Task id {task_id} is not found"}, 404))
+
+    return task
