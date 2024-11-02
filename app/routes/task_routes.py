@@ -9,10 +9,8 @@ def create_task():
     request_body = request.get_json()
     title = request_body["title"]
     description = request_body["description"]
-    # is_complete = request_body["is_complete"]
 
     new_task = Task(title=title, description=description)
-    # new_task = Task(title=title, description=description, is_complete=is_complete)
 
     db.session.add(new_task)
     db.session.commit()
@@ -36,33 +34,33 @@ def get_all_tasks():
     return tasks_response
 
 
-@tasks_bp.get("/<planet_id>")
-def get_single_planet(planet_id):
-    planet = validate_planet(planet_id)
+@tasks_bp.get("/<task_id>")
+def get_single_task(task_id):
+    task = validate_task(task_id)
 
-    return planet.to_dict()
+    return {"task":task.to_dict()}
 
-@tasks_bp.put("/<planet_id>")
-def update_planet(planet_id):
-    planet = validate_planet(planet_id)
+@tasks_bp.put("/<task_id>")
+def update_task(task_id):
+    task = validate_task(task_id)
     request_body = request.get_json()
 
-    planet.name = request_body["name"]
-    planet.description = request_body["description"]
+    task.name = request_body["name"]
+    task.description = request_body["description"]
     db.session.commit()
 
     return Response(status = 204, mimetype = "application/json")
 
-@tasks_bp.delete("/<planet_id>")
-def delete_planet(planet_id):
-    planet = validate_planet(planet_id)
+@tasks_bp.delete("/<task_id>")
+def delete_task(task_id):
+    task = validate_task(task_id)
     
-    db.session.delete(planet)
+    db.session.delete(task)
     db.session.commit()
 
     return Response(status = 204, mimetype = "application/json")
 
-def validate_planet(task_id):
+def validate_task(task_id):
     try:
         task_id = int(task_id)
     except ValueError: 

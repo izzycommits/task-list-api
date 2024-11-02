@@ -6,15 +6,18 @@ from datetime import datetime
 class Task(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     title: Mapped[str]
-    description: Mapped[str]
+    description: Mapped[str] 
     completed_at: Mapped[Optional[datetime]] 
-    is_complete: Mapped[Optional[bool]] = mapped_column(default=False)
 
-    def to_dict(self): 
+
+    def to_dict(self):
+        is_complete_flag = False 
+        if self.completed_at: 
+            is_complete_flag = True
+
         return dict(
             id=self.id,
             title=self.title, 
             description=self.description,
-            completed_at=self.completed_at,
-            is_complete=self.is_complete
+            is_complete = is_complete_flag
         )
