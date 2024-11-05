@@ -10,9 +10,7 @@ tasks_bp = Blueprint("tasks_bp", __name__, url_prefix="/tasks")
 def create_task(): 
     request_body = request.get_json()
     try:
-        title = request_body["title"]
-        description = request_body["description"]
-        new_task = Task(title=title, description=description)
+        new_task = Task.from_dict(request_body)
     except KeyError as e:
         response = {"details": "Invalid data"}
         abort(make_response(response, 400))
@@ -87,6 +85,8 @@ def update_task_incomplete(task_id):
 
     response = {"task":task.to_dict()}
     return response
+
+
 @tasks_bp.delete("/<task_id>")
 def delete_task(task_id):
     task = validate_model(Task, task_id)
