@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-  from .goal import Goal
+    from .goal import Goal
 
 class Task(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -14,7 +14,7 @@ class Task(db.Model):
     description: Mapped[str] 
     completed_at: Mapped[Optional[datetime]] 
     goal_id: Mapped[Optional[int]] = mapped_column(ForeignKey("goal.id"))
-    goal: Mapped[Optional["Goal"]] = relationship(back_populates="goals")
+    goal: Mapped[Optional["Goal"]] = relationship(back_populates="tasks")
 
     def to_dict(self):
         is_complete_flag = False 
@@ -25,12 +25,14 @@ class Task(db.Model):
             id=self.id,
             title=self.title, 
             description=self.description,
-            is_complete = is_complete_flag
+            is_complete = is_complete_flag,
+            goal=self.goal.title if self.goal else None 
         )
     
     @classmethod
     def from_dict(cls, task_data): 
         return cls( 
             title=task_data["title"], 
-            description=task_data["description"]
+            description=task_data["description"],
+            goal_id=task_data.get("goal_id", None)
         )
