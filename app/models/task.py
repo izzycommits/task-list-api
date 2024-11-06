@@ -21,18 +21,22 @@ class Task(db.Model):
         if self.completed_at: 
             is_complete_flag = True
 
-        return dict(
-            id=self.id,
-            title=self.title, 
-            description=self.description,
-            is_complete = is_complete_flag,
-            goal=self.goal.title if self.goal else None 
-        )
+        task_dict = {
+            "id": self.id,
+            "title": self.title, 
+            "description": self.description,
+            "is_complete": is_complete_flag
+        }
+
+        # if self.goal.title:
+        #     task_dict["goal_id"] = self.goal_id
+
+        return task_dict
     
     @classmethod
     def from_dict(cls, task_data): 
+
         return cls( 
             title=task_data["title"], 
-            description=task_data["description"],
-            goal_id=task_data.get("goal_id", None)
-        )
+            description=task_data["description"])
+        

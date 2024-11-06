@@ -2,7 +2,7 @@ from flask import Blueprint, abort, make_response, request, Response
 from app.models.task import Task
 from app.db import db
 from datetime import date
-from .route_utilities import validate_model
+from .route_utilities import validate_model, create_model, get_models_with_filters
 import requests
 import os
 
@@ -11,44 +11,17 @@ tasks_bp = Blueprint("tasks_bp", __name__, url_prefix="/tasks")
 @tasks_bp.post("")
 def create_task(): 
     request_body = request.get_json()
-    try:
-        new_task = Task.from_dict(request_body)
-    except KeyError:
-        response = {"details": "Invalid data"}
-        abort(make_response(response, 400))
-    db.session.add(new_task)
-    db.session.commit()
-
-    response = {"task": new_task.to_dict()}
-    return response, 201
-
-
-@tasks_bp.get("")
-def get_all_tasks(): 
-    query = db.select(Task)
-    
-    title_param = request.args.get("title")
-    if title_param:
-        query = query.where(Task.title.ilike(f"%{title_param}%"))
-    
-    sort_param = request.args.get("sort")  
-    if sort_param == "desc":
-        query = query.order_by(Task.title.desc()) 
-    else:
-        query = query.order_by(Task.title) 
-
-    query=query.order_by(Task.id)
-    tasks = db.session.scalars(query)
-
-    tasks_response =[task.to_dict() for task in tasks]
-
-    return tasks_response
-
+    return create_model(Task, request_body)
 
 @tasks_bp.get("/<task_id>")
 def get_single_task(task_id):
     task = validate_model(Task, task_id)
     return {"task":task.to_dict()}
+
+@tasks_bp.get("")
+def get_all_tasks(): 
+    return get_models_with_filters(Task, request.args)
+
 
 @tasks_bp.put("/<task_id>")
 def update_task(task_id):
@@ -84,7 +57,6 @@ def update_task_incomplete(task_id):
     if create_slack_msg(task): 
         response = {"task":task.to_dict()}
         return response
-
 
 
 @tasks_bp.delete("/<task_id>")
