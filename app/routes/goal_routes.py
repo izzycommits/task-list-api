@@ -76,8 +76,11 @@ def delete_all_tasks_in_goal(goal_id):
 
     for task in goal.tasks:
         db.session.delete(task)
-        db.session.commit()
+    
+    db.session.commit()
 
     response = {"details": f'All tasks in \"{goal.title}\" are successfully deleted'}
     return response
+
+
 
