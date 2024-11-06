@@ -41,18 +41,8 @@ def delete_goal(goal_id):
     response = {"details": f'Goal {goal_id} \"{goal.title}\" successfully deleted'}
     return response
 
-
-# @goals_bp.post("/<goal_id>/tasks")
-# def create_task_with_goal(goal_id):
-#     goal = validate_model(Goal, goal_id)
-#     request_body = request.get_json()
-
-#     request_body["goal_id"] = goal.id
-
-#     return create_model(Task, request_body)
-
 @goals_bp.post("/<goal_id>/tasks")
-def create_task_with_goal(goal_id):
+def add_tasks_to_goal(goal_id):
     goal = validate_model(Goal, goal_id)
     request_body = request.get_json()
     
@@ -60,7 +50,7 @@ def create_task_with_goal(goal_id):
 
     for task_id in task_ids:
         task = validate_model(Task, task_id)
-        goal.tasks.append(task) 
+        goal.tasks.append(task)
 
     db.session.commit()
 
@@ -68,15 +58,26 @@ def create_task_with_goal(goal_id):
         "id": goal.id,
         "task_ids": task_ids,
     }
-    return response, 201
+    return response
 
 @goals_bp.get("/<goal_id>/tasks")
-def get_tasks_by_goal(goal_id):
+def get_tasks_in_goal(goal_id):
     goal = validate_model(Goal, goal_id)
 
     task_list = [task.to_dict() for task in goal.tasks]
 
     response = goal.to_dict()
     response["tasks"] = task_list
+    return response
+
+@goals_bp.delete("/<goal_id>/tasks")
+def delete_all_tasks_in_goal(goal_id):
+    goal = validate_model(Goal, goal_id)
+
+    for task in goal.tasks:
+        db.session.delete(task)
+        db.session.commit()
+
+    response = {"details": f'All tasks in \"{goal.title}\" are successfully deleted'}
     return response
 

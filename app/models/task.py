@@ -28,8 +28,8 @@ class Task(db.Model):
             "is_complete": is_complete_flag
         }
 
-        # if self.goal.title:
-        #     task_dict["goal_id"] = self.goal_id
+        if self.goal:
+            task_dict["goal_id"] = self.goal_id
 
         return task_dict
     
