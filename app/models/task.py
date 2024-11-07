@@ -29,7 +29,7 @@ class Task(db.Model):
         }
 
         if self.goal:
-            task_dict["goal_id"] = self.goal_id
+            task_dict["goal_id"] = self.goal.id
 
         return task_dict
     

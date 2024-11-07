@@ -1,4 +1,5 @@
 from app.models.goal import Goal
+from app.db import db
 import pytest
 
 
@@ -96,7 +97,7 @@ def test_update_goal(client, one_goal):
             "title": "Updated Goal Title"
         }
     }
-    goal = Goal.query.get(1)
+    goal = db.session.get(Goal, 1)
     assert goal.title == "Updated Goal Title"
 
 
@@ -131,7 +132,8 @@ def test_delete_goal(client, one_goal):
     # Check that the goal was deleted
     response = client.get("/goals/1")
     assert response.status_code == 404
-    assert Goal.query.get(1) == None
+    # assert Goal.query.get(1) == None
+    assert db.session.get(Goal, 1) is None
 
 
 

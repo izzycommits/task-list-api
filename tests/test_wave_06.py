@@ -1,4 +1,5 @@
 from app.models.goal import Goal
+from app.db import db
 import pytest
 
 
@@ -20,7 +21,8 @@ def test_post_task_ids_to_goal(client, one_goal, three_tasks):
     }
 
     # Check that Goal was updated in the db
-    assert len(Goal.query.get(1).tasks) == 3
+    # assert len(Goal.query.get(1).tasks) == 3
+    assert len(db.session.get(Goal, 1).tasks) == 3
 
 
 # @pytest.mark.skip(reason="No way to test this feature yet")
@@ -39,8 +41,8 @@ def test_post_task_ids_to_goal_already_with_goals(client, one_task_belongs_to_on
         "id": 1,
         "task_ids": [1, 4]
     }
-    assert len(Goal.query.get(1).tasks) == 2
-
+    # assert len(Goal.query.get(1).tasks) == 2
+    assert len(db.session.get(Goal, 1).tasks) == 2
 
 def test_get_tasks_for_specific_goal_no_goal(client):
     # Act
@@ -124,4 +126,4 @@ def test_delete_all_tasks_in_a_goal(client, one_task_belongs_to_one_goal, three_
     assert response_body == {
         "details": f'All tasks in "Build a habit of going outside daily" are successfully deleted'
     }
-    assert len(Goal.query.get(1).tasks) == 0
+    assert len(db.session.get(Goal, 1).tasks) == 0

@@ -80,13 +80,10 @@ def create_slack_msg(task):
 
     return requests.post("https://slack.com/api/chat.postMessage", headers=header, params=params)
 
-# @tasks_bp.post("/<task_id>")
+# @tasks_bp.post("/<task_id>/subtask")
 # def create_subtask(): 
 #     request_body = request.get_json()
-
-#     subtask = request_body["subtask"]
-
-#     for task_id in task_ids:
 #     task = validate_model(Task, task_id)
-
-#     return create_model(Task, request_body)
+#     subtask = request_body["subtask"]
+#     task = validate_model(Task, task_id)
+#     return create_model(Subtask, request_body)
