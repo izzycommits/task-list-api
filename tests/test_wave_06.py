@@ -113,3 +113,15 @@ def test_get_task_includes_goal_id(client, one_task_belongs_to_one_goal):
             "is_complete": False
         }
     }
+
+def test_delete_all_tasks_in_a_goal(client, one_task_belongs_to_one_goal, three_tasks):
+    # Act
+    response = client.delete("/goals/1/tasks")
+    response_body = response.get_json()
+
+    # Assert
+    assert response.status_code == 200
+    assert response_body == {
+        "details": f'All tasks in "Build a habit of going outside daily" are successfully deleted'
+    }
+    assert len(Goal.query.get(1).tasks) == 0
