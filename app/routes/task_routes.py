@@ -43,8 +43,9 @@ def update_task_complete(task_id):
     db.session.add(task)
     db.session.commit()
 
-    response = {"task":task.to_dict()}
-    return response
+    if create_slack_msg(task): 
+        response = {"task":task.to_dict()}
+        return response
 
 @tasks_bp.patch("/<task_id>/mark_incomplete")
 def update_task_incomplete(task_id):
@@ -54,9 +55,8 @@ def update_task_incomplete(task_id):
     db.session.add(task)
     db.session.commit()
 
-    if create_slack_msg(task): 
-        response = {"task":task.to_dict()}
-        return response
+    response = {"task":task.to_dict()}
+    return response
 
 
 @tasks_bp.delete("/<task_id>")
@@ -79,3 +79,14 @@ def create_slack_msg(task):
     }
 
     return requests.post("https://slack.com/api/chat.postMessage", headers=header, params=params)
+
+# @tasks_bp.post("/<task_id>")
+# def create_subtask(): 
+#     request_body = request.get_json()
+
+#     subtask = request_body["subtask"]
+
+#     for task_id in task_ids:
+#     task = validate_model(Task, task_id)
+
+#     return create_model(Task, request_body)
