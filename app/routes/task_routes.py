@@ -48,7 +48,8 @@ def update_task_complete(task_id):
     db.session.commit()
 
     if not is_complete_check:
-        create_slack_msg(task) 
+        create_slack_msg(task)
+        is_complete_check = True 
 
     response = {"task":task.to_dict()}
     return response

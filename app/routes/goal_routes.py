@@ -42,7 +42,7 @@ def delete_goal(goal_id):
     return response
 
 @goals_bp.post("/<goal_id>/tasks")
-def add_tasks_to_goal(goal_id):
+def assign_tasks_by_goal(goal_id):
     goal = validate_model(Goal, goal_id)
     request_body = request.get_json()
     
@@ -63,7 +63,7 @@ def add_tasks_to_goal(goal_id):
     return response
 
 @goals_bp.get("/<goal_id>/tasks")
-def get_tasks_in_goal(goal_id):
+def get_tasks_by_goal(goal_id):
     goal = validate_model(Goal, goal_id)
 
     task_list = [task.to_dict() for task in goal.tasks]
@@ -73,7 +73,7 @@ def get_tasks_in_goal(goal_id):
     return response
 
 @goals_bp.delete("/<goal_id>/tasks")
-def delete_all_tasks_in_goal(goal_id):
+def delete_all_tasks_by_goal(goal_id):
     goal = validate_model(Goal, goal_id)
 
     for task in goal.tasks:
