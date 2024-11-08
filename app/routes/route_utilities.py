@@ -1,4 +1,4 @@
-from flask import Blueprint, abort, make_response, request, Response
+from flask import abort, make_response, request
 from ..db import db
 
 def validate_model(cls, model_id):
